@@ -2,12 +2,12 @@
   (:require [clojure.string :as str]
             [clojure.pprint :as pp]))
 
-(defmacro gen-test [form]
-  `(~'deftest ~(symbol (str (name (first form)) "-test-" (name (gensym ""))))
-     (~'testing "FIXME: describe something"
-       (~'is (~'= ~form ~(eval form))))))
-
-(macroexpand-1 '(gen-test (first [1 2 3])))
+(defn gen-test 
+  ([form] (gen-test form (eval form)))
+  ([form expected]
+  `(~'deftest ~(symbol (str (name (first form)) "-test-" (quot (System/currentTimeMillis) 1000) "-" (name (gensym ""))))
+     (~'testing "this was deemed correct during development"
+       (~'is (~'= ~form ~expected))))))
 
 ;; stolen from clojure.tools.namespace.move
 (defn- ns-file-name [sym]
@@ -24,17 +24,22 @@
   (let [file (get-test-file)]
     (when (.exists file)
       (spit file (str \newline (with-out-str (pp/pprint macroexpanded-test))) :append true))))
-(.exists (get-test-file))
 
-(add-test! (macroexpand-1 '(gen-test (first [1 2 3]))))
+(defn gen-test-ns []
+  `(~'ns ~(symbol (str (ns-name *ns*) "-test"))
+     (:require [~'clojure.test :refer :all]
+               [~(ns-name *ns*) :refer :all])))
+
+(defn add-test! [macroexpanded-test]
+  (let [file (get-test-file)]
+    (when-not (.exists file)
+      (spit file (with-out-str (pp/pprint (gen-test-ns)))))
+    (spit file (str \newline (with-out-str (pp/pprint macroexpanded-test))) :append true)))
 
 (defmacro fixate!! 
-  ([form] (add-test! (macroexpand-1 `(gen-test ~form))))
-  ([form expected] (add-test! (macroexpand-1 `(gen-test ~form ~expected)))))
+  ([form] (add-test! (gen-test form)))
+  ([form expected] (add-test! (gen-test form expected))))
 
+(comment 
 (fixate!! (first [1 2 3]))
-
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(fixate!! (first [1 2 3]) (+ 1 1)))
