@@ -33,6 +33,7 @@
 (defn add-test! [macroexpanded-test]
   (let [file (get-test-file)]
     (when-not (.exists file)
+      (.mkdirs (.getParentFile file))
       (spit file (with-out-str (pp/pprint (gen-test-ns)))))
     (spit file (str \newline (with-out-str (pp/pprint macroexpanded-test))) :append true)))
 
