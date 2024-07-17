@@ -32,7 +32,7 @@ Add a test:
 (fixate!! form)
 ```
 
-This will add a test with the assertion `(= form (eval form))` to a Clojure file located under `test/your/awesome/name_space-test`,
+This will add a test with the assertion `(= form (eval form))` to a Clojure file located under `test/your/awesome/name_space-test.clj`,
 if your are currently editing the `your.awesome.name-space` namespace.
 Note that this is a particularly bad idea if you are working with an infinite sequence.
 
