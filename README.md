@@ -1,5 +1,7 @@
 # testor
 
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.pkoerner/testor.svg)](https://clojars.org/org.clojars.pkoerner/testor)
+
 A Clojure library designed to quickly add tests during development.
 
 Intended to work with a typical leiningen setup, because that's what I work with.
