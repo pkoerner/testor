@@ -38,6 +38,9 @@
     (spit file (str \newline (with-out-str (pp/pprint macroexpanded-test))) :append true)))
 
 (defmacro fixate!! 
+  "Add a test of the form (= form (eval form)) 
+  or (= form expected), depending on number of arguments.
+  Test will be added to a file test/your/awesome/name_space-test.clj"
   ([form] (add-test! (gen-test form)))
   ([form expected] (add-test! (gen-test form expected))))
 
