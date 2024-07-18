@@ -20,11 +20,6 @@
 (defn- get-test-file []
   (clojure.java.io/file "test/" (ns-file-name (ns-name *ns*))))
 
-(defn- add-test! [macroexpanded-test]
-  (let [file (get-test-file)]
-    (when (.exists file)
-      (spit file (str \newline (with-out-str (pp/pprint macroexpanded-test))) :append true))))
-
 (defn- gen-test-ns []
   `(~'ns ~(symbol (str (ns-name *ns*) "-test"))
      (:require [~'clojure.test :refer :all]
