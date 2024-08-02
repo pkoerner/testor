@@ -7,7 +7,7 @@
   ([form expected]
   `(~'deftest ~(symbol (str (name (first form)) "-test-" (quot (System/currentTimeMillis) 1000) "-" (name (gensym ""))))
      (~'testing "this was deemed correct during development"
-       (~'is (~'= ~form ~expected))))))
+       (~'is (~'= ~form ~(if (seq? expected) `(quote ~expected) expected)))))))
 
 ;; stolen from clojure.tools.namespace.move
 (defn- ns-file-name [sym]
@@ -41,4 +41,6 @@
 
 (comment 
 (fixate!! (first [1 2 3]))
-(fixate!! (first [1 2 3]) (+ 1 1)))
+(fixate!! (first [1 2 3]) (+ 1 1))
+(fixate!! (map inc [1 2 3]))
+)
