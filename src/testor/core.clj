@@ -3,11 +3,15 @@
             [clojure.pprint :as pp]))
 
 (defn- gen-test 
-  ([form] (gen-test form (eval form)))
+  ([form] (gen-test form `(quote ~(eval form))))
   ([form expected]
-  `(~'deftest ~(symbol (str (name (first form)) "-test-" (quot (System/currentTimeMillis) 1000) "-" (name (gensym ""))))
-     (~'testing "this was deemed correct during development"
-       (~'is (~'= ~form ~(if (seq? expected) `(quote ~expected) expected)))))))
+   (gen-test (symbol (str (name (first form)) "-test-" (quot (System/currentTimeMillis) 1000) "-" (name (gensym "")))) form expected))
+  ([testname form expected]
+   (gen-test testname "this was deemed correct during development" form expected))
+  ([testname description form expected]
+  `(~'deftest ~testname
+     (~'testing ~description
+       (~'is (~'= ~form ~expected))))))
 
 ;; stolen from clojure.tools.namespace.move
 (defn- ns-file-name [sym]
@@ -37,10 +41,14 @@
   or (= form expected), depending on number of arguments.
   Test will be added to a file test/your/awesome/name_space-test.clj"
   ([form] (add-test! (gen-test form)))
-  ([form expected] (add-test! (gen-test form expected))))
+  ([form expected] (add-test! (gen-test form expected)))
+  ([testname form expected] (add-test! (gen-test testname form expected))) 
+  ([testname description form expected] (add-test! (gen-test testname description form expected))) )
 
 (comment 
 (fixate!! (first [1 2 3]))
 (fixate!! (first [1 2 3]) (+ 1 1))
 (fixate!! (map inc [1 2 3]))
+(fixate!! foo-test (first [1 2 3]) 1)
+(fixate!! foo-test "this tests stuff" (first [1 2 3]) 1)
 )
