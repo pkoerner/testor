@@ -45,6 +45,12 @@
   ([testname form expected] (add-test! (gen-test testname form expected))) 
   ([testname description form expected] (add-test! (gen-test testname description form expected))) )
 
+(defmacro fixate-all!! 
+  "Convenience macro. Will call (fixate!! form) on each of the forms."
+  [& forms]
+  `(do ~@(for [f# forms] `(fixate!! ~f#))))
+
+
 (comment 
 (fixate!! (first [1 2 3]))
 (fixate!! (first [1 2 3]) (+ 1 1))
