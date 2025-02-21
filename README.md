@@ -38,6 +38,8 @@ This will add a test with the assertion `(= form (eval form))` to a Clojure file
 if your are currently editing the `your.awesome.name-space` namespace.
 Note that this is a particularly bad idea if you are working with an infinite sequence.
 
+---
+
 Sometimes, you want to add an expected value - in particular,
 if you work with objects that are not serializable.
 You can then use:
@@ -48,11 +50,52 @@ You can then use:
 
 which will add a test of the form `(= form expected)` to the corresponding test namespace.
 
-If namespaces for tests to not exist yet, they will be created.
+---
+
+By default, the testname will be a combination of the function name of the form, the current timestamp and a gensym'd number,
+something like `foo-test-1740132174551-2240`.
+This is ugly.
+You can provide a better name by calling:
+
+```
+(fixate!! awesome-test-name form expected)
+```
+
+Here, `awesome-test-name` should be a symbol.
+
+---
+
+Finally, complex tests might not be clear to read later on.
+The final arity lets you also provide a description suitable for clojure.test:
+
+```
+(fixate!! awesome-test-name "I guess this should work" form expected)
+```
+
+By default, the description claims that you thought this was correct behaviour when you developed it.
+
+---
+
+Mostly, I care more that the test exists and less about its name and description.
+Often, I find myself working and debugging in a rich comment block.
+Then, if I end up with a number of calls, it is unwieldy to call `fixate!!` on each individual form.
+Thus, there also is `fixate-all!!`, which does not allow clever names and descriptions,
+but adds each call as a test.
+It is a small macro that expands to a number of `fixate!!` calls.
+
+```
+(fixate-all!! (= 1 1)
+              (= 1 2)
+              (< 1 2))
+```
+
+---
+
+If namespaces for tests do not exist yet, they will be created.
 
 ## License
 
-Copyright © 2024 pkoerner
+Copyright © 2025 pkoerner
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
