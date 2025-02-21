@@ -38,6 +38,13 @@ This will add a test with the assertion `(= form (eval form))` to a Clojure file
 if your are currently editing the `your.awesome.name-space` namespace.
 Note that this is a particularly bad idea if you are working with an infinite sequence.
 
+This (and only this) arity of `fixate!!` will try to simplify some generated testing predicates.
+If your form is `(= ...)`, it will not try to generate `(= (= ...) true)` or `(= (= ...) false)`,
+but simply put `(is form)` or `(is (not= ...))`.
+Similarly, forms with comparison operators like `<` or `<=` are not compared with `true` or `false`.
+In general, this will also occur if the function name of the outermost form ends in a `?`.
+
+
 ---
 
 Sometimes, you want to add an expected value - in particular,
